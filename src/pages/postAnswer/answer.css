@@ -1,0 +1,31 @@
+.answer-wrap {
+  color: var(--text-color4) !important;
+}
+.answer-wrap h3 {
+  color: var(--text-color) !important;
+  font-weight: 600;
+  font-size: 22px;
+}
+.answer-input-wrap {
+  box-shadow: 2px 2px 25px rgba(0, 0, 0, 0.1);
+}
+.answer-input-wrap a:hover {
+  color: var(--text-color) !important;
+  text-decoration: underline !important;
+  cursor: pointer;
+  transition: 0.3s ease-in-out;
+}
+.answer-form .answer-form-input {
+  box-shadow: none !important;
+  border: none !important;
+}
+.answer-form .answer-form-input:focus {
+  box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1) inset,
+    -1px -1px 5px rgba(0, 0, 0, 0.1) inset !important;
+}
+.btn-postAnswer {
+  background-color: var(--btn-bg-color) !important;
+}
+.btn-postAnswer:hover {
+  background-color: var(--btn-bg-hover) !important;
+}

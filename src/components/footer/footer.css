@@ -1,0 +1,24 @@
+.footer-container {
+  width: 100%;
+  background-color: var(--footer-color) !important;
+}
+.footer-logo {
+  width: 200px;
+  height: 28px;
+  margin-bottom: 40px;
+}
+.social-link .links a :hover {
+  background-color: var(--secondary-color);
+  color: rgba(0, 0, 255, 0.5) !important ;
+  transition: 0.3s ease-in-out;
+}
+.contact-info p,
+.useful-links a {
+  display: block;
+  text-decoration: none !important;
+  color: var(--text-color1) !important;
+}
+.useful-links a:hover {
+  color: var(--secondary-color) !important;
+  transition: 0.3s ease-in-out;
+}

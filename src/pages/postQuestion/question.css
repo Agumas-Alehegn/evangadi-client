@@ -1,0 +1,23 @@
+.question-wrap {
+  color: var(--text-color1) !important;
+}
+.question-wrap h3 {
+  color: var(--text-color2) !important;
+  font-weight: 600;
+  font-size: 22px;
+}
+.question-input-wrap {
+  box-shadow: 2px 2px 25px rgba(0, 0, 0, 0.1);
+}
+.question-input-wrap a:hover {
+  color: var(--text-color) !important;
+  text-decoration: underline !important;
+  cursor: pointer;
+  transition: 0.3s ease-in-out;
+}
+.btn-postQuestion {
+  background-color: var(--btn-bg-color) !important;
+}
+.btn-postQuestion:hover {
+  background-color: var(--btn-bg-hover) !important;
+}

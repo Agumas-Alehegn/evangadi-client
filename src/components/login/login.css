@@ -1,0 +1,100 @@
+.container {
+  width: 1240px !important;
+}
+.signin-container,
+.signup-container {
+  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2) !important;
+}
+.btn-register {
+  background-color: var(--btn-bg-color) !important;
+}
+.btn-register:hover {
+  background-color: var(--btn-bg-hover) !important;
+}
+.signin-container h3,
+.signup-container h3 {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--tertiary-color);
+  margin: 0 0 10px;
+  padding: 0 0 5px;
+}
+.signin-container p,
+.signup-container p {
+  font-size: 16px;
+  color: var(--text-color);
+  margin: 0 0 10px;
+}
+.signin-container form p,
+.signin-container p > small,
+.signin-container small > a,
+.signup-container form p,
+.signup-container p > small,
+.signup-container small > a {
+  color: var(--link-color);
+  cursor: pointer;
+}
+.animated-input {
+  border: none !important;
+  border: 1px solid #ccc !important;
+  outline: none !important;
+  border-radius: 4px !important;
+}
+.animated-input:focus {
+  box-shadow: none !important;
+  border: 1px solid #ccc !important;
+  border-bottom: 3px solid var(--link-color) !important;
+}
+.animated-input::placeholder {
+  color: var(--text-color1);
+  font-size: 14px;
+  outline: none !important;
+}
+.input-password {
+  position: relative;
+}
+.eyeBtn {
+  background-color: transparent;
+  position: absolute;
+  top: 33%;
+  right: 5%;
+  color: var(--text-color1);
+  margin-right: 8px;
+}
+.eyeBtn:hover {
+  color: var(--link-color) !important;
+}
+.aside-container small {
+  color: var(--text-color3);
+}
+.aside-container h1 {
+  font-size: 46px;
+  font-weight: 700;
+  background: linear-gradient(to right, #d73b00, #441300);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+.aside-container p {
+  margin: 20px 0 30px 0;
+  color: var(--text-color2);
+}
+.aside-container button {
+  font-size: 15px !important;
+  color: #ffffff;
+  background-color: var(--btn-bg-color1);
+  padding: 8px 25px;
+}
+.aside-container button:focus,
+.aside-container button:hover {
+  background-color: var(--btn-bg-color1) !important;
+  color: #ffffff !important;
+  opacity: 0.8;
+  transition: ease-in-out 0.3s;
+}
+@media (max-width: 768px) {
+  .container {
+    width: 100% !important;
+  }
+}

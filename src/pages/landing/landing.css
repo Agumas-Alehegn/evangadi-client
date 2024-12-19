@@ -1,0 +1,10 @@
+.landing-container {
+  background-image: url("../../asset/bg-svg-f.svg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+.container {
+  padding-top: 36px !important;
+  overflow: hidden;
+}
