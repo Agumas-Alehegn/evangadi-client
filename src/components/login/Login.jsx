@@ -1,32 +1,37 @@
-import React, { useContext } from "react";
+import React from "react";
 import { motion } from "framer-motion";
 import "./login.css";
 import SignUp from "./Signup";
 import SignIn from "./Signin";
-import { AuthContext } from "../../context/AuthContext";
+import useAuth from "../../hooks/useAuth";
 
 function Login() {
-  const { isSignin } = useContext(AuthContext);
-
-  const variants = {
-    hidden: { opacity: 0, x: 100 },
-    visible: { opacity: 1, x: 0 },
-    exit: { opacity: 0, x: -1 },
-  };
-
+  const { activeForm, toggleSignUp } = useAuth();
   return (
     <section className="container d-md-flex align-items-start justify-content-center px-5 px-md-0 gap-4   ">
       <div className="auth-container overflow-hidden   col col-md-6 mx-auto  ">
-        <motion.div
-          key={isSignin ? "signin" : "createAccount"}
-          initial="hidden"
-          animate="visible"
-          exit="exit"
-          variants={variants}
-          transition={{ duration: "0.5" }}
-        >
-          {isSignin ? <SignIn /> : <SignUp />}
-        </motion.div>
+        {activeForm === "signin" && (
+          <motion.div
+            key="signin"
+            initial={{ x: 300 }}
+            animate={{ x: 0 }}
+            exit={{ x: -300 }}
+            transition={{ duration: 0.5 }}
+          >
+            <SignIn />
+          </motion.div>
+        )}
+        {activeForm === "signup" && (
+          <motion.div
+            key="signup"
+            initial={{ x: -300 }}
+            animate={{ x: 0 }}
+            exit={{ x: 300 }}
+            transition={{ duration: 0.5 }}
+          >
+            <SignUp />
+          </motion.div>
+        )}
       </div>
       <div className="aside-container d-none d-md-block col-md-6  my-4 ps-2  ">
         <small className="">About</small>
@@ -42,7 +47,9 @@ function Login() {
           looking to meet mentors of your own, please start by joining the
           network here.
         </p>
-        <button className="btn btn-warning">CREATE A NEW ACCOUNT</button>
+        <button onClick={toggleSignUp} className="btn btn-warning">
+          CREATE A NEW ACCOUNT
+        </button>
       </div>
     </section>
   );

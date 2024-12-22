@@ -1,5 +1,4 @@
 import React, { useContext } from "react";
-// import { useContext } from "react";
 import { userContext } from "../../context/UserProvider";
 import Question from "../../components/question/Question";
 import "./home.css";

@@ -3,23 +3,27 @@ import axios from "../../axiosConfig";
 import { useNavigate } from "react-router-dom";
 import { Button, Form } from "react-bootstrap";
 import { FaEyeSlash } from "react-icons/fa";
-import { AuthContext } from "../../context/AuthContext";
-import { userContext } from "../../context/UserProvider";
-
+import UserProvider, { userContext } from "../../context/UserProvider";
+import usePasswordToggle from "../../hooks/usePasswordToggle";
+import useMessage from "../../hooks/useMessage";
 import "./login.css";
 import { FcOk } from "react-icons/fc";
 import { IoIosClose } from "react-icons/io";
+import useAuth from "../../hooks/useAuth";
+import { FadeLoader } from "react-spinners";
+import useLoader from "../../hooks/useLoader";
 
 function SignIn() {
   const [validated, setValidated] = useState(false);
-  const [passwordType, setPasswordType] = useState("password");
-  const { toggleForm } = useContext(AuthContext);
+  const { passwordType, togglePasswordType } = usePasswordToggle();
+  const { updateUser } = useContext(userContext);
+  const { toggleSignUp } = useAuth();
+  const { successMsg, errorMsg, showSuccessMsg, showErrorMsg } = useMessage();
+  const { loading, toggleLoading, offLoading } = useLoader();
+
   const emailDom = useRef();
   const passwordDom = useRef();
   const navigate = useNavigate();
-  const [successMessage, setSuccessMessage] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
-  const { updateUser } = useContext(userContext);
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -33,41 +37,35 @@ function SignIn() {
     const userEmailValue = emailDom.current.value;
     const userPassValue = passwordDom.current.value;
     if (!userEmailValue) {
-      setErrorMessage("Please enter your email address.");
+      showErrorMsg("Please enter your email address.");
     } else if (!userPassValue) {
-      setErrorMessage("Password is required to log in");
+      showErrorMsg("Password is required to log in");
       return;
     }
+    toggleLoading();
     try {
       const { data } = await axios.post("/users/login", {
         user_email: userEmailValue,
         user_pass: userPassValue,
       });
       localStorage.setItem("access_token", data.access_token);
-      setSuccessMessage(data?.msg);
-      console.log(data);
+      showSuccessMsg(data?.msg);
+      offLoading();
       updateUser(data);
-
-      setTimeout(() => {
-        navigate("/home");
-      }, 1000);
+      navigate("/home");
     } catch (error) {
-      setErrorMessage(error?.response?.data.msg);
+      showErrorMsg(error?.response?.data.msg);
+      offLoading();
     }
   }
 
-  const togglePasswordType = () => {
-    setPasswordType((prevPass) =>
-      prevPass === "password" ? "text" : "password"
-    );
-  };
   return (
     <div className="signin-container p-4 bg-white m-3 p-4  rounded ">
       <div className="text-center mb-4 ">
-        <h3 className="">Login to your account </h3>
+        <h3 className="">Login to your account</h3>
         <p>
           Don't have an account?
-          <small onClick={toggleForm}> Create a new account</small>
+          <small onClick={toggleSignUp}> Create a new account</small>
         </p>
       </div>
       <Form noValidate validated={validated} onSubmit={handleSubmit}>
@@ -84,7 +82,7 @@ function SignIn() {
         </Form.Group>
         <Form.Group
           className="input-container input-password  mb-3 "
-          controlId="userPassword"
+          controlId="user_pass"
         >
           <Form.Control
             ref={passwordDom}
@@ -103,17 +101,19 @@ function SignIn() {
             />
           </span>
         </Form.Group>
-
-        {successMessage ? (
-          <Button className=" btn-register  d-block my-4 mx-auto col-12 fs-4">
-            {successMessage}. <FcOk size={"30"} />
+        {loading ? (
+          <Button className=" btn-register d-flex justify-content-center  d-block my-4 mx-auto col-12 fs-4">
+            <FadeLoader size={35} color={"#fff"} />
           </Button>
-        ) : errorMessage ? (
+        ) : successMsg ? (
+          <Button className=" btn-register  d-block my-4 mx-auto col-12 fs-4">
+            {successMsg}. <FcOk size={"30"} />
+          </Button>
+        ) : errorMsg ? (
           <>
             <p className="text-danger text-center">
-              {errorMessage}. <IoIosClose size={"30"} color="red" />
+              {errorMsg}. <IoIosClose size={"30"} color="red" />
             </p>
-
             <Button
               className="btn-register d-block my-4 mx-auto col-12 fs-4"
               type="submit"
@@ -121,7 +121,8 @@ function SignIn() {
             >
               Submit
             </Button>
-            <p className="text-center my-3" onClick={toggleForm}>
+            )
+            <p className="text-center my-3" onClick={toggleSignUp}>
               Create an account?
             </p>
           </>
@@ -134,7 +135,8 @@ function SignIn() {
             >
               Submit
             </Button>
-            <p className="text-center my-3" onClick={toggleForm}>
+
+            <p className="text-center my-3" onClick={toggleSignUp}>
               Create an account?
             </p>
           </>

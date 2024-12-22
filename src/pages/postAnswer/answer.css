@@ -29,3 +29,8 @@
 .btn-postAnswer:hover {
   background-color: var(--btn-bg-hover) !important;
 }
+.pagination-wrap {
+  display: flex;
+  justify-content: flex-end;
+  margin: 10px 20px 0;
+}

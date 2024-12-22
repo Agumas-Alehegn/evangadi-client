@@ -4,23 +4,32 @@ import Form from "react-bootstrap/Form";
 import "./question.css";
 import { Button } from "react-bootstrap";
 import axios from "../../axiosConfig";
+import useCharacterLimit from "../../hooks/useCharacterLimit";
+import useMessage from "../../hooks/useMessage";
+import useLoader from "../../hooks/useLoader";
+import { FadeLoader } from "react-spinners";
 
-function Question() {
-  const questionDom = useRef();
+export function Question() {
   const navigate = useNavigate();
+  const questionDom = useRef();
   const questionDescriptionDom = useRef();
+  const { successMsg, errorMsg, showSuccessMsg, showErrorMsg } = useMessage();
+  const titleLimit = useCharacterLimit(50);
+  const descriptionLimit = useCharacterLimit(200);
+  const { loading, toggleLoading, offLoading } = useLoader();
 
   async function handleSubmit(e) {
     e.preventDefault();
     const questionTitleValue = questionDom.current.value;
     const questionDescriptionValue = questionDescriptionDom.current.value;
     if (!questionTitleValue || !questionDescriptionValue) {
-      alert("All fields are required.");
+      showErrorMsg("All fields are required.");
       return;
     }
+    toggleLoading();
     try {
       const token = localStorage.getItem("access_token");
-      await axios.post(
+      const { data } = await axios.post(
         "/questions/question",
         {
           question: questionTitleValue,
@@ -30,11 +39,14 @@ function Question() {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-      alert("post successful");
+      showSuccessMsg(data.msg);
+      offLoading();
+      titleLimit.reset();
+      descriptionLimit.reset();
       navigate("/home");
     } catch (error) {
-      alert(error?.response?.data.msg);
-      console.log(error.response?.data);
+      showErrorMsg(error?.response?.data.msg);
+      offLoading();
     }
   }
 
@@ -59,22 +71,74 @@ function Question() {
           </div>
           <Form onSubmit={handleSubmit} className="mt-3">
             <Form.Group className="mb-3" controlId="questionTitle">
-              <Form.Control ref={questionDom} type="text" placeholder="Title" />
+              <Form.Control
+                ref={questionDom}
+                type="text"
+                placeholder={`Type upto ${titleLimit.maxLength} characters`}
+                onChange={titleLimit.handleChange}
+                value={titleLimit.text}
+              />
             </Form.Group>
+            <div className="text-end ">
+              {titleLimit.characterCount === 0 ? (
+                ""
+              ) : (
+                <small
+                  className="me-2 text-muted
+              "
+                >
+                  {titleLimit.text.length} / {titleLimit.maxLength}
+                </small>
+              )}
+
+              {titleLimit.limitReached && (
+                <small className="text-danger">
+                  You hit the maximum limit!!!
+                </small>
+              )}
+            </div>
             <Form.Group className="mb-3" controlId="questionDescription">
               <Form.Control
                 ref={questionDescriptionDom}
                 as="textarea"
                 rows={6}
-                placeholder="Question description"
+                placeholder={`Type upto ${descriptionLimit.maxLength} characters`}
+                onChange={descriptionLimit.handleChange}
+                value={descriptionLimit.text}
               />
             </Form.Group>
-            <Button
-              className="btn-postQuestion d-block my-4 fs-5 "
-              type="submit"
-            >
-              Post Your Question
-            </Button>
+            <div className="text-end ">
+              {descriptionLimit.characterCount === 0 ? (
+                ""
+              ) : (
+                <small
+                  className="me-2 text-muted
+              "
+                >
+                  {descriptionLimit.text.length} / {descriptionLimit.maxLength}
+                </small>
+              )}
+
+              {descriptionLimit.limitReached && (
+                <small className="text-danger">
+                  You hit the maximum limit!!!
+                </small>
+              )}
+            </div>
+            {successMsg && <div className="text-success">{successMsg}</div>}
+            {errorMsg && <div className="text-danger">{errorMsg}</div>}
+            {loading ? (
+              <Button className=" btn-register d-flex justify-content-center  d-block my-4 mx-auto col-12 fs-4">
+                <FadeLoader size={35} color={"#fff"} />
+              </Button>
+            ) : (
+              <Button
+                className="btn-postQuestion d-block my-4 fs-5 "
+                type="submit"
+              >
+                Post Your Question
+              </Button>
+            )}
           </Form>
         </div>
       </div>

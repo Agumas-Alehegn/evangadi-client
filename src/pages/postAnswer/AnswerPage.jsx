@@ -1,15 +1,22 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import "./answer.css";
-import { Button, Form } from "react-bootstrap";
 import axios from "../../axiosConfig";
 import Answer from "../../components/answer/Answer";
-// import { response } from "express";
+import useCharacterLimit from "../../hooks/useCharacterLimit";
+import useMessage from "../../hooks/useMessage";
+import { Button, Form } from "react-bootstrap";
+import "./answer.css";
+import useLoader from "../../hooks/useLoader";
+import { FadeLoader } from "react-spinners";
 
-function AnswerPage() {
+function AnswerPage({ maxLength = 200 }) {
   const { id } = useParams();
-  const answerDom = useRef();
   const [question, setQuestion] = useState({});
+  const [answers, setAnswers] = useState({});
+  const { text, limitReached, characterCount, handleChange, reset } =
+    useCharacterLimit(maxLength);
+  const { successMsg, errorMsg, showSuccessMsg, showErrorMsg } = useMessage();
+  const { loading, offLoading, toggleLoading } = useLoader();
 
   useEffect(() => {
     async function getSingleQuestion() {
@@ -27,30 +34,47 @@ function AnswerPage() {
     }
     getSingleQuestion();
   }, []);
-
+  const getAnswers = async (page) => {
+    const access_token = localStorage.getItem("access_token");
+    toggleLoading();
+    try {
+      const response = await axios.get(`/answers/answer/${id}`, {
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+        },
+        params: { page },
+      });
+      setAnswers(response.data);
+      offLoading();
+    } catch (error) {
+      console.log("Error fetching Answers", error);
+      offLoading();
+    }
+  };
   async function handleSubmit(e) {
     e.preventDefault();
-    const answerContent = answerDom.current.value;
-    if (!answerContent) {
-      alert("Answer cannot be empty.");
+    if (!text) {
+      showErrorMsg("Answer cannot be empty.");
       return;
     }
+    toggleLoading();
     try {
       const token = localStorage.getItem("access_token");
-      await axios.post(
+      const { data } = await axios.post(
         `/answers/answer/${id}`,
-        { answer_description: answerContent },
+        { answer_description: text },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      alert("Answer posted successfully.");
-
-      answerDom.current.value = "";
+      showSuccessMsg(data.msg);
+      getAnswers();
+      offLoading();
+      reset();
     } catch (error) {
-      console.log(error.response);
-      alert("Failed to post answer.");
+      showErrorMsg(error.response.data.msg);
+      offLoading();
+      reset();
     }
   }
-
   return (
     <section className="container">
       <div className="answer-wrap">
@@ -63,7 +87,7 @@ function AnswerPage() {
         <h3>Answers from the community</h3>
         <div className="answer-input-wrap px-4 pt-3 pb-1 ">
           <div className="text-center">
-            <Answer />
+            <Answer data={answers} getAnswerFunc={getAnswers} />
             <h3 className="">Answer The Top Question</h3>
             <Link className="text-decoration-none text-secondary " to="/home">
               Go to question page
@@ -75,21 +99,51 @@ function AnswerPage() {
               controlId="exampleForm.ControlTextarea1"
             >
               <Form.Control
-                ref={answerDom}
                 className="answer-form-input"
                 as="textarea"
                 rows={6}
-                placeholder="Your answer..."
+                placeholder={`Type upto ${maxLength} characters`}
+                value={text}
+                onChange={handleChange}
               />
             </Form.Group>
-            <Button className="btn-postAnswer d-block my-4 fs-5 " type="submit">
-              Post Your Answer
-            </Button>
+
+            <div className="text-end ">
+              {characterCount === 0 ? (
+                ""
+              ) : (
+                <small
+                  className="me-2 text-muted
+              "
+                >
+                  {text.length} / {maxLength}
+                </small>
+              )}
+
+              {limitReached && (
+                <small className="text-danger">
+                  You hit the maximum limit!!!
+                </small>
+              )}
+            </div>
+            {successMsg && <div className="text-success">{successMsg}</div>}
+            {errorMsg && <div className="text-danger">{errorMsg}</div>}
+            {loading ? (
+              <Button type="submit">
+                <FadeLoader size={35} color={"#fff"} />
+              </Button>
+            ) : (
+              <Button
+                className="btn-postAnswer d-block my-4 fs-5 "
+                type="submit"
+              >
+                Post Your Answer
+              </Button>
+            )}
           </Form>
         </div>
       </div>
     </section>
   );
 }
-
 export default AnswerPage;

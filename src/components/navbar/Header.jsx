@@ -3,18 +3,19 @@ import "./header.css";
 import { useLocation, useNavigate } from "react-router-dom";
 import { userContext } from "../../context/UserProvider";
 import { useContext } from "react";
+import useAuth from "../../hooks/useAuth";
 
 function Header() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, updateUser } = useContext(userContext);
+  const { updateUser } = useContext(userContext);
+  const { toggleSignIn } = useAuth();
   const isLandingPage = location.pathname === "/";
   const handleLogout = () => {
     localStorage.removeItem("user");
     updateUser(null);
-    localStorage.setItem("access_token", "");
+    localStorage.removeItem("access_token");
     navigate("/");
-    console.log("Logged out");
   };
 
   return (
@@ -43,7 +44,10 @@ function Header() {
               <Nav.Link href="/home">Home</Nav.Link>
               <Nav.Link href="/how">How it works</Nav.Link>
               {isLandingPage ? (
-                <Button className="btn-signin mt-5 mt-lg-0  px-lg-5">
+                <Button
+                  onClick={toggleSignIn}
+                  className="btn-signin mt-5 mt-lg-0  px-lg-5"
+                >
                   SIGN IN
                 </Button>
               ) : (

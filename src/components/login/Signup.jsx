@@ -1,22 +1,24 @@
-import { useContext, useState, useRef } from "react";
+import { useRef, useState } from "react";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import axios from "../../axiosConfig";
 import { Link, useNavigate } from "react-router-dom";
-import { FaEyeSlash } from "react-icons/fa";
-import { AuthContext } from "../../context/AuthContext";
-
+import usePasswordToggle from "../../hooks/usePasswordToggle";
+import useMessage from "../../hooks/useMessage";
+import useAuth from "../../hooks/useAuth";
 import { FcOk } from "react-icons/fc";
 import { IoIosClose } from "react-icons/io";
+import { FaEyeSlash } from "react-icons/fa";
+import useLoader from "../../hooks/useLoader";
+import { FadeLoader } from "react-spinners";
 
 function SignUp() {
-  const [validated, setValidated] = useState({ agreed: false });
-  const [passwordType, setPasswordType] = useState("password");
+  const [validated, setValidated] = useState(false);
   const [check, setCheck] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
-  const { toggleForm } = useContext(AuthContext);
-
+  const { toggleSignIn } = useAuth();
+  const { passwordType, togglePasswordType } = usePasswordToggle();
+  const { successMsg, errorMsg, showSuccessMsg, showErrorMsg } = useMessage();
+  const { loading, toggleLoading, offLoading } = useLoader();
   const userNameDom = useRef();
   const firstNameDom = useRef();
   const lastNameDom = useRef();
@@ -44,13 +46,14 @@ function SignUp() {
       !userEmailValue ||
       !userPassValue
     ) {
-      setErrorMessage("All fields are required");
+      showErrorMsg("All fields are required");
       return;
     }
     if (!check.agreed) {
-      setErrorMessage("You must agree to the terms and conditions");
+      showErrorMsg("You must agree to the terms and conditions");
       return;
     }
+    toggleLoading();
     try {
       const response = await axios.post("/users/register", {
         user_name: userNameValue,
@@ -59,29 +62,24 @@ function SignUp() {
         user_email: userEmailValue,
         user_pass: userPassValue,
       });
-      setSuccessMessage(response?.data?.msg);
+      showSuccessMsg(response?.data?.msg);
+      offLoading();
       setTimeout(() => {
         navigate("/");
-        toggleForm();
+        toggleSignIn();
       }, 1000);
     } catch (error) {
-      setErrorMessage(error?.response?.data?.msg);
+      showErrorMsg(error?.response?.data?.msg);
+      offLoading();
     }
   }
-
-  const togglePasswordType = () => {
-    setPasswordType((prevPass) =>
-      prevPass === "password" ? "text" : "password"
-    );
-  };
-
   return (
     <div className="signup-container bg-white m-3 p-4  rounded ">
       <div className="text-center ">
         <h3 className="">Join the network </h3>
         <p>
           Already have an account?
-          <small onClick={toggleForm}> Sign in</small>
+          <small onClick={toggleSignIn}> Sign in</small>
         </p>
       </div>
       <Form noValidate validated={validated} onSubmit={handleSubmit}>
@@ -164,9 +162,9 @@ function SignUp() {
         </Form.Group>
         <Form.Group className="mb-3 d-flex ">
           <div className="d-flex flex-column">
-            {errorMessage && (
+            {errorMsg && (
               <small className="text-danger text-center">
-                {errorMessage}. <IoIosClose size={"30"} color="red" />
+                {errorMsg}. <IoIosClose size={"30"} color="red" />
               </small>
             )}
             <div className="d-flex">
@@ -188,9 +186,9 @@ function SignUp() {
             </div>
           </div>
         </Form.Group>
-        {successMessage ? (
-          <Button className="btn-register d-block col-12 fs-5">
-            {successMessage}. <FcOk size={"30"} />
+        {loading ? (
+          <Button className=" d-flex justify-content-center btn-register d-block col-12 fs-5">
+            <FadeLoader size={35} color={"#fff"} />
           </Button>
         ) : (
           <>
@@ -201,7 +199,7 @@ function SignUp() {
             >
               Agree and Join
             </Button>
-            <p className="text-center mt-3" onClick={toggleForm}>
+            <p className="text-center mt-3" onClick={toggleSignIn}>
               Already have an account?
             </p>
           </>

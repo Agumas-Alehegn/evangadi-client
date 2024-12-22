@@ -5,11 +5,14 @@ import { formatDistanceToNow } from "date-fns";
 import { FcPrevious, FcNext } from "react-icons/fc";
 import { RxAvatar } from "react-icons/rx";
 import { FaChevronRight } from "react-icons/fa";
+import useLoader from "../../hooks/useLoader";
+import { FadeLoader } from "react-spinners";
 
 function Question() {
   const [questions, setQuestions] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
+  const { loading, toggleLoading, offLoading } = useLoader();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -18,6 +21,7 @@ function Question() {
 
   async function getQuestion(page) {
     const access_token = localStorage.getItem("access_token");
+    toggleLoading;
     try {
       const response = await axios.get("/questions/question", {
         headers: {
@@ -28,11 +32,13 @@ function Question() {
 
       setQuestions(response.data.questions);
       setTotalPages(response.data.totalPages);
+      offLoading();
     } catch (error) {
       console.error(
         "Error fetching questions",
         error.response?.data || error.msg
       );
+      offLoading();
     }
   }
   const handlePage = (newPage) => {
@@ -44,7 +50,13 @@ function Question() {
       navigate(`/home/${question_id}`);
     }, 1000);
   };
-
+  if (loading) {
+    return (
+      <div className="">
+        <FadeLoader />
+      </div>
+    );
+  }
   if (questions?.length > 0) {
     return (
       <>
@@ -136,5 +148,4 @@ function Question() {
     );
   }
 }
-
 export default Question;
