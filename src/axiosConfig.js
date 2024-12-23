@@ -1,5 +1,5 @@
 import axios from "axios";
 const axiosBase = axios.create({
-  baseURL: "http://localhost:2323/api",
+  baseURL: "https://evangadi-api-1.onrender.com/api",
 });
 export default axiosBase;
