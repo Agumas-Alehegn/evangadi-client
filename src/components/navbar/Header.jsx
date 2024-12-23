@@ -1,6 +1,6 @@
 import { Nav, Navbar, Container, Offcanvas, Button } from "react-bootstrap";
 import "./header.css";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { userContext } from "../../context/UserProvider";
 import { useContext } from "react";
 import useAuth from "../../hooks/useAuth";
@@ -10,7 +10,8 @@ function Header() {
   const navigate = useNavigate();
   const { updateUser } = useContext(userContext);
   const { toggleSignIn } = useAuth();
-  const isLandingPage = location.pathname === "/";
+  const isLandingPage =
+    location.pathname === "/" || location.pathname === "/how";
   const handleLogout = () => {
     localStorage.removeItem("user");
     updateUser(null);
@@ -43,17 +44,25 @@ function Header() {
             <Nav className="justify-content-end flex-grow-1 pe-3 sidebar">
               <Nav.Link href="/home">Home</Nav.Link>
               <Nav.Link href="/how">How it works</Nav.Link>
-              {isLandingPage ? (
+              {location.pathname === "/" ? (
                 <Button
                   onClick={toggleSignIn}
-                  className="btn-signin mt-5 mt-lg-0  px-lg-5"
+                  className="btn-signin mt-5 mt-lg-0 px-lg-5"
                 >
                   SIGN IN
+                </Button>
+              ) : location.pathname === "/how" ? (
+                <Button
+                  type="link"
+                  href="/"
+                  className="btn-signin mt-5 mt-lg-0 px-lg-5"
+                >
+                  JOIN
                 </Button>
               ) : (
                 <Button
                   onClick={handleLogout}
-                  className="btn-signin mt-5 mt-lg-0  px-lg-5"
+                  className="btn-signin mt-5 mt-lg-0 px-lg-5"
                 >
                   LOG OUT
                 </Button>

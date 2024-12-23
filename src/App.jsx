@@ -1,10 +1,11 @@
 import { useEffect } from "react";
-import { Route, Routes, useNavigate } from "react-router-dom";
+import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import axios from "./axiosConfig";
 import Landing from "./pages/landing/Landing";
 import Question from "./pages/postQuestion/Question";
 import Home from "./pages/home/Home";
 import AnswerPage from "./pages/postAnswer/AnswerPage";
+import How from "./pages/how/How";
 import SharedComponent from "./components/sharedComponent/SharedComponent,";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./index.css";
@@ -14,6 +15,9 @@ import LoaderProvider from "./context/LoaderProvider";
 
 function App() {
   const Navigate = useNavigate();
+  const location = useLocation();
+  const isHowPage = location.pathname === "/how";
+
   async function checkUser() {
     const access_token = localStorage.getItem("access_token");
     try {
@@ -23,7 +27,11 @@ function App() {
         },
       });
     } catch (error) {
-      Navigate("/");
+      if (isHowPage) {
+        Navigate("/how");
+      } else {
+        Navigate("/");
+      }
     }
   }
   useEffect(() => {
@@ -37,6 +45,7 @@ function App() {
           <Routes>
             <Route path="/" element={<SharedComponent />}>
               <Route index element={<Landing />} />
+              <Route path="how" element={<How />} />
               <Route path="home" element={<Home />} />
               <Route path="postQuestion" element={<Question />} />
               <Route path="home/:id" element={<AnswerPage />} />
