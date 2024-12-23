@@ -10,7 +10,7 @@ import "./login.css";
 import { FcOk } from "react-icons/fc";
 import { IoIosClose } from "react-icons/io";
 import useAuth from "../../hooks/useAuth";
-import { FadeLoader } from "react-spinners";
+import { ClipLoader, FadeLoader } from "react-spinners";
 import useLoader from "../../hooks/useLoader";
 
 function SignIn() {
@@ -50,9 +50,9 @@ function SignIn() {
       });
       localStorage.setItem("access_token", data.access_token);
       showSuccessMsg(data?.msg);
-      offLoading();
       updateUser(data);
       navigate("/home");
+      offLoading();
     } catch (error) {
       showErrorMsg(error?.response?.data.msg);
       offLoading();
@@ -72,7 +72,7 @@ function SignIn() {
         <Form.Group className="input-container mb-3" controlId="userEmail">
           <Form.Control
             ref={emailDom}
-            className="animated-input p-3"
+            className="animated-input p-2"
             type="email"
             name="user_email"
             placeholder="Enter email"
@@ -86,7 +86,7 @@ function SignIn() {
         >
           <Form.Control
             ref={passwordDom}
-            className="animated-input p-3 "
+            className="animated-input p-2 "
             type={passwordType}
             name="user_pass"
             placeholder="Password"
@@ -103,7 +103,7 @@ function SignIn() {
         </Form.Group>
         {loading ? (
           <Button className=" btn-register d-flex justify-content-center  d-block my-4 mx-auto col-12 fs-4">
-            <FadeLoader size={35} color={"#fff"} />
+            <ClipLoader size={"30"} color={"#fff"} />
           </Button>
         ) : successMsg ? (
           <Button className=" btn-register  d-block my-4 mx-auto col-12 fs-4">
@@ -121,7 +121,7 @@ function SignIn() {
             >
               Submit
             </Button>
-            )
+
             <p className="text-center my-3" onClick={toggleSignUp}>
               Create an account?
             </p>

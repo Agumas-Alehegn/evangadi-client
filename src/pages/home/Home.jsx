@@ -3,10 +3,12 @@ import { userContext } from "../../context/UserProvider";
 import Question from "../../components/question/Question";
 import "./home.css";
 import { useNavigate } from "react-router-dom";
+import useLoader from "../../hooks/useLoader";
 
 function Home() {
   const { user } = useContext(userContext);
   const navigate = useNavigate();
+  const { loading, toggleLoading, offLoading } = useLoader();
 
   const askNewQuestion = () => {
     setTimeout(() => {
@@ -32,6 +34,7 @@ function Home() {
         <div className="questions-container">
           <h3 className="title">Questions</h3>
           <hr className="border border-secondary border-1 opacity-25"></hr>
+
           <Question />
         </div>
       </div>

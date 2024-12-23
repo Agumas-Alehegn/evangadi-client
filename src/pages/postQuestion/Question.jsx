@@ -7,7 +7,7 @@ import axios from "../../axiosConfig";
 import useCharacterLimit from "../../hooks/useCharacterLimit";
 import useMessage from "../../hooks/useMessage";
 import useLoader from "../../hooks/useLoader";
-import { FadeLoader } from "react-spinners";
+import { ClipLoader, FadeLoader } from "react-spinners";
 
 export function Question() {
   const navigate = useNavigate();
@@ -128,8 +128,8 @@ export function Question() {
             {successMsg && <div className="text-success">{successMsg}</div>}
             {errorMsg && <div className="text-danger">{errorMsg}</div>}
             {loading ? (
-              <Button className=" btn-register d-flex justify-content-center  d-block my-4 mx-auto col-12 fs-4">
-                <FadeLoader size={35} color={"#fff"} />
+              <Button className=" btn-register d-flex justify-content-center  d-block my-4   col-6 fs-5">
+                Posting question <ClipLoader size={35} color={"#fff"} />
               </Button>
             ) : (
               <Button

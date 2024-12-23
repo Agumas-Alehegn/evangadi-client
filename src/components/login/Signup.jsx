@@ -10,7 +10,7 @@ import { FcOk } from "react-icons/fc";
 import { IoIosClose } from "react-icons/io";
 import { FaEyeSlash } from "react-icons/fa";
 import useLoader from "../../hooks/useLoader";
-import { FadeLoader } from "react-spinners";
+import { ClipLoader, FadeLoader } from "react-spinners";
 
 function SignUp() {
   const [validated, setValidated] = useState(false);
@@ -188,7 +188,15 @@ function SignUp() {
         </Form.Group>
         {loading ? (
           <Button className=" d-flex justify-content-center btn-register d-block col-12 fs-5">
-            <FadeLoader size={35} color={"#fff"} />
+            <ClipLoader size={"30"} color={"#fff"} />
+          </Button>
+        ) : successMsg ? (
+          <Button
+            className="btn-register d-block col-12 fs-5"
+            type="submit"
+            value={"register"}
+          >
+            {successMsg} <FcOk size={"30"} />
           </Button>
         ) : (
           <>

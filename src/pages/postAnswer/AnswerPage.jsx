@@ -7,7 +7,7 @@ import useMessage from "../../hooks/useMessage";
 import { Button, Form } from "react-bootstrap";
 import "./answer.css";
 import useLoader from "../../hooks/useLoader";
-import { FadeLoader } from "react-spinners";
+import { ClipLoader, FadeLoader } from "react-spinners";
 
 function AnswerPage({ maxLength = 200 }) {
   const { id } = useParams();
@@ -129,8 +129,11 @@ function AnswerPage({ maxLength = 200 }) {
             {successMsg && <div className="text-success">{successMsg}</div>}
             {errorMsg && <div className="text-danger">{errorMsg}</div>}
             {loading ? (
-              <Button type="submit">
-                <FadeLoader size={35} color={"#fff"} />
+              <Button
+                type="submit"
+                className="btn-postAnswer d-block my-4 fs-5 "
+              >
+                <ClipLoader size={"35"} color={"#fff"} /> Posting Your answer.
               </Button>
             ) : (
               <Button
